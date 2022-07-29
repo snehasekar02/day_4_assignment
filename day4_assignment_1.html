@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<style type="text/css">
+
+body {
+	margin: 0;
+}
+
+#element {
+	height: 800px;
+	width: 50%;
+	background-color: #40b7c6;
+	font-size: 20px;
+    padding-top: 20px;
+	text-align: center;
+    left: 0;
+
+}
+
+#go-button {
+	width: 200px;
+	display: block;
+	margin: 50px auto 0 auto;
+}
+
+/* webkit requires explicit width, height = 100% of sceeen */
+/* webkit also takes margin into account in full screen also - so margin should be removed (otherwise black areas will be seen) */
+#element:-webkit-full-screen {
+	width: 100%;
+	height: 100%;
+	background-color: pink;
+	margin: 0;
+}
+
+#element:-moz-full-screen {
+	background-color: pink;
+	margin: 0;
+}
+
+#element:-ms-fullscreen {
+	background-color: pink;
+	margin: 0;
+}
+
+/* W3C proposal that will eventually come in all browsers */
+#element:fullscreen { 
+	background-color: pink;
+	margin: 0;
+}
+
+</style>
+
+</head>
+
+<body>
+	<div id="element">
+		<span>Full Screen Mode Disabled</span>
+		<button id="go-button">Enable Full Screen</button>
+	</div>
+</body>
+
+<script>
+
+/* Get into full screen */
+function GoInFullscreen(element) {
+	if(element.requestFullscreen)
+		element.requestFullscreen();
+	else if(element.mozRequestFullScreen)
+		element.mozRequestFullScreen();
+	else if(element.webkitRequestFullscreen)
+		element.webkitRequestFullscreen();
+	else if(element.msRequestFullscreen)
+		element.msRequestFullscreen();
+}
+
+/* Get out of full screen */
+function GoOutFullscreen() {
+	if(document.exitFullscreen)
+		document.exitFullscreen();
+	else if(document.mozCancelFullScreen)
+		document.mozCancelFullScreen();
+	else if(document.webkitExitFullscreen)
+		document.webkitExitFullscreen();
+	else if(document.msExitFullscreen)
+		document.msExitFullscreen();
+}
+
+/* Is currently in full screen or not */
+function IsFullScreenCurrently() {
+	var full_screen_element = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || null;
+	
+	// If no element is in full-screen
+	if(full_screen_element === null)
+		return false;
+	else
+		return true;
+}
+
+$("#go-button").on('click', function() {
+	if(IsFullScreenCurrently())
+		GoOutFullscreen();
+	else
+		GoInFullscreen($("#element").get(0));
+});
+
+$(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function() {
+	if(IsFullScreenCurrently()) {
+		$("#element span").text('Full Screen Mode Enabled');
+		$("#go-button").text('Disable Full Screen');
+	}
+	else {
+		$("#element span").text('Full Screen Mode Disabled');
+		$("#go-button").text('Enable Full Screen');
+	}
+});
+
+</script>
+
+</html>
